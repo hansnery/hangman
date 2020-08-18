@@ -1,5 +1,7 @@
 class Hangman
   require_relative 'word.rb'
+
+  @hanged = false
   
   def self.create_secret_word
     @word = Word.new.sample.chomp.upcase
@@ -20,6 +22,10 @@ class Hangman
         @displayed_characters[idx] = @typed_letter
       end
     end
+
+    if @displayed_characters.none? { |n| n == "_" }
+      @hanged = true
+    end
   end
 
   def self.ask_for_letter
@@ -33,11 +39,14 @@ class Hangman
 
   display_characters
 
-  ask_for_letter
+  while @hanged == false
+    ask_for_letter
 
-  check_matches
+    check_matches
 
-  display_characters
+    display_characters
+  end
+  
   #if there are matches, reveal them
   
   #if there are no matches draw another stick
