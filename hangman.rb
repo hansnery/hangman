@@ -26,8 +26,9 @@ class Hangman
       end
     elsif choice == "2"
       puts "\nLoading game..."
+      puts YAML::load(@saved_game)
     elsif choice == "3"
-      return
+      end_game
     else
       puts "\nType a valid number!"
       begin_game
@@ -110,7 +111,9 @@ class Hangman
               |
       }
     end
-    puts "#{@hangman}"
+    if @hanged == false
+      puts "#{@hangman}"
+    end
   end
 
   def check_matches
@@ -134,40 +137,53 @@ class Hangman
     puts "\nThe word was #{@word}.\nYou were hanged!\nTry again? Type yes or no."
     answer = gets.chomp.downcase
     if answer == "yes"
-      @hanged = false
-      @errors = 0
-      @displayed_characters = []
-      @typed_letters = []
-      begin_game
+      reset_game
     elsif answer == "no"
-      puts "Good bye!"
+      end_game
     else
       puts "You typed an invalid answer!"
       ask_for_a_rematch
     end
   end
 
+  def end_game
+    puts "\nGood bye!"
+    @hanged = true
+    return
+  end
+
+  def reset_game
+    @hanged = false
+    @errors = 0
+    @displayed_characters = []
+    @typed_letters = []
+    begin_game
+  end
+
   def ask_for_letter
     puts "\nType a letter to figure out the secret word:"
     @typed_letter = gets.chomp.upcase
-    @typed_letters.each do |c|
-      if c == @typed_letter
-        puts "\nYou already tried this letter before, try another one!"
+    if @typed_letter == "SAVE"
+      @saved_game = YAML::dump(self)
+      begin_game
+    else
+      @typed_letters.each do |c|
+        if c == @typed_letter
+          puts "\nYou already tried this letter before, try another one!"
+          draw_hangman
+          display_characters
+          ask_for_letter
+        end
+      end
+      if @typed_letter.length > 1
+        puts "\nYou can type only one letter at a time!"
         draw_hangman
         display_characters
         ask_for_letter
       end
-    end
-    if @typed_letter.length > 1
-      puts "\nYou can type only one letter at a time!"
-      draw_hangman
-      display_characters
-      ask_for_letter
     end
   end
 end
 
 test = Hangman.new
 test.begin_game
-# serialized_object = YAML::dump(test)
-# puts serialized_object
