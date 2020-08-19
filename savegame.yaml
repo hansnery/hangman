@@ -1,0 +1,21 @@
+--- !ruby/object:Hangman
+hanged: false
+errors: 2
+hangman: "\n        ------ \n        O    |\n       /     |\n             |\n             |\n
+  \    "
+displayed_characters:
+- A
+- _
+- _
+- _
+- _
+- _
+- E
+- _
+typed_letters:
+- C
+- A
+- D
+- E
+word: ALLOTTER
+typed_letter: SAVE

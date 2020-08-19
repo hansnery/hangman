@@ -1,1 +1,1 @@
-begin_game
+display_characters
