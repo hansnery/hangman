@@ -1,12 +1,15 @@
 class Hangman
   require "yaml"
   require_relative 'word.rb'
+  attr_accessor :hanged, :errors, :hangman, :displayed_characters, :typed_letters
 
-  @@hanged = false
-  @@errors = 0
-  @@hangman = ""
-  @@displayed_characters = []
-  @@typed_letters = []
+  def initialize(hanged = false, errors = 0, hangman = "", displayed_characters = [], typed_letters = [])
+    @hanged = hanged
+    @errors = errors
+    @hangman = hangman
+    @displayed_characters = displayed_characters
+    @typed_letters = typed_letters
+  end
 
   def begin_game
     create_secret_word
@@ -14,7 +17,7 @@ class Hangman
     puts "\nWelcome to Hangman!"
     draw_hangman
     display_characters
-    while @@hanged == false
+    while @hanged == false
       ask_for_letter
       check_matches
       display_characters
@@ -27,19 +30,19 @@ class Hangman
     @word = Word.new.sample.chomp.upcase
     number_of_characters = @word.chomp.length
     number_of_characters.times do
-      @@displayed_characters << "_"
+      @displayed_characters << "_"
     end
   end
 
   def display_characters
-    puts @@displayed_characters.join(" ")
-    puts "\nGuesses: #{@@typed_letters.join(" ")}" unless @@typed_letters.empty?
+    puts @displayed_characters.join(" ")
+    puts "\nGuesses: #{@typed_letters.join(" ")}" unless @typed_letters.empty?
   end
 
   def draw_hangman
-    case @@errors
+    case @errors
     when 0
-      @@hangman = %{
+      @hangman = %{
         ------ 
              |
              |
@@ -47,7 +50,7 @@ class Hangman
              |
      }
     when 1
-      @@hangman = %{
+      @hangman = %{
         ------ 
         O    |
              |
@@ -55,7 +58,7 @@ class Hangman
              |
      }
     when 2
-      @@hangman = %{
+      @hangman = %{
         ------ 
         O    |
        /     |
@@ -63,7 +66,7 @@ class Hangman
              |
      }
     when 3
-      @@hangman = %{
+      @hangman = %{
         ------ 
         O    |
        /|    |
@@ -71,7 +74,7 @@ class Hangman
              |
      }
     when 4
-      @@hangman = %{
+      @hangman = %{
         ------ 
         O    |
        /|\\   |
@@ -79,7 +82,7 @@ class Hangman
              |
      }
     when 5
-      @@hangman = %{
+      @hangman = %{
         ------ 
         O    |
        /|\\   |
@@ -87,7 +90,7 @@ class Hangman
              |
      }
     when 6
-      @@hangman = %{
+      @hangman = %{
          ------ 
          O    |
         /|\\   |
@@ -95,21 +98,22 @@ class Hangman
               |
       }
     end
-    puts "#{@@hangman}"
+    puts "#{@hangman}"
   end
 
   def check_matches
     @word.each_char.with_index do |letter, idx|
       if letter == @typed_letter
-        @@displayed_characters[idx] = @typed_letter
+        @displayed_characters[idx] = @typed_letter
+        draw_hangman
       end
     end
-    if @@displayed_characters.none? { |n| n == @typed_letter }
-      @@errors += 1
+    if @displayed_characters.none? { |n| n == @typed_letter }
+      @errors += 1
       draw_hangman
     end
-    if @@errors > 5
-      @@hanged = true
+    if @errors > 5
+      @hanged = true
       ask_for_a_rematch
     end
   end
@@ -118,10 +122,10 @@ class Hangman
     puts "\nYou were hanged!\nTry again? Type yes or no."
     answer = gets.chomp.downcase
     if answer == "yes"
-      @@hanged = false
-      @@errors = 0
-      @@displayed_characters = []
-      @@typed_letters = []
+      @hanged = false
+      @errors = 0
+      @displayed_characters = []
+      @typed_letters = []
       begin_game
     elsif answer == "no"
       return
@@ -134,7 +138,7 @@ class Hangman
   def ask_for_letter
     puts "\nType a letter to figure out the secret word: "
     @typed_letter = gets.chomp.upcase
-    @@typed_letters << @typed_letter
+    @typed_letters << @typed_letter
   end
 end
 
