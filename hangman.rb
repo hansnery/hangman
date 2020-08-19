@@ -107,13 +107,12 @@ class Hangman
     @word.each_char.with_index do |letter, idx|
       if letter == @typed_letter
         @displayed_characters[idx] = @typed_letter
-        draw_hangman
       end
     end
     if @displayed_characters.none? { |n| n == @typed_letter }
       @errors += 1
-      draw_hangman
     end
+    draw_hangman
     if @errors > 5
       @hanged = true
       ask_for_a_rematch
