@@ -13,7 +13,7 @@ class Hangman
 
   def begin_game
     create_secret_word
-    # puts "#{@word}"
+    # puts "#{@word}" # For the purpose of testing
     puts "\nWelcome to Hangman!"
     draw_hangman
     display_characters
@@ -35,8 +35,10 @@ class Hangman
   end
 
   def display_characters
-    puts @displayed_characters.join(" ")
-    puts "\nGuesses: #{@typed_letters.join(" ")}" unless @typed_letters.empty?
+    if @hanged == false
+      puts @displayed_characters.join(" ")
+      puts "\nGuesses: #{@typed_letters.join(" ")}" unless @typed_letters.empty?
+    end
   end
 
   def draw_hangman
@@ -116,10 +118,11 @@ class Hangman
       @hanged = true
       ask_for_a_rematch
     end
+    @typed_letters << @typed_letter
   end
 
   def ask_for_a_rematch
-    puts "\nYou were hanged!\nTry again? Type yes or no."
+    puts "\nThe word was #{@word}.\nYou were hanged!\nTry again? Type yes or no."
     answer = gets.chomp.downcase
     if answer == "yes"
       @hanged = false
@@ -128,7 +131,7 @@ class Hangman
       @typed_letters = []
       begin_game
     elsif answer == "no"
-      return
+      puts "Good bye!"
     else
       puts "You typed an invalid answer!"
       ask_for_a_rematch
@@ -136,12 +139,26 @@ class Hangman
   end
 
   def ask_for_letter
-    puts "\nType a letter to figure out the secret word: "
+    puts "\nType a letter to figure out the secret word:"
     @typed_letter = gets.chomp.upcase
-    @typed_letters << @typed_letter
+    @typed_letters.each do |c|
+      if c == @typed_letter
+        puts "\nYou already tried this letter before, try another one!"
+        draw_hangman
+        display_characters
+        ask_for_letter
+      end
+    end
+    if @typed_letter.length > 1
+      puts "\nYou can type only one letter at a time!"
+      draw_hangman
+      display_characters
+      ask_for_letter
+    end
   end
 end
 
 test = Hangman.new
 test.begin_game
 # serialized_object = YAML::dump(test)
+# puts serialized_object
