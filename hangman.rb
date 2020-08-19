@@ -1,13 +1,15 @@
 class Hangman
+  require "yaml"
   require_relative 'word.rb'
 
   @hanged = false
   @errors = 0
   @hangman = ""
+  @displayed_characters = []
+  @typed_letters = []
   
   def self.create_secret_word
     @word = Word.new.sample.chomp.upcase
-    @displayed_characters = []
     number_of_characters = @word.chomp.length
     number_of_characters.times do
       @displayed_characters << "_"
@@ -16,7 +18,7 @@ class Hangman
 
   def self.display_characters
     puts @displayed_characters.join(" ")
-    puts "\n"
+    puts "\nGuesses: #{@typed_letters.join(" ")}" unless @typed_letters.empty?
   end
 
   def self.draw_hangman
@@ -103,6 +105,8 @@ class Hangman
     if answer == "yes"
       @hanged = false
       @errors = 0
+      @displayed_characters = []
+      @typed_letters = []
       begin_game
     elsif answer == "no"
       return
@@ -115,11 +119,13 @@ class Hangman
   def self.ask_for_letter
     puts "\nType a letter to figure out the secret word: "
     @typed_letter = gets.chomp.upcase
+    @typed_letters << @typed_letter
   end
 
   def self.begin_game
     create_secret_word
-    puts "\nWelcome to Hangman! #{@word}"
+    # puts "#{@word}"
+    puts "\nWelcome to Hangman!"
     draw_hangman
     display_characters
     while @hanged == false
@@ -131,3 +137,10 @@ class Hangman
 
   begin_game
 end
+
+test = Hangman.new
+
+# serialized_object = YAML::dump(test)
+
+# test.begin_game
+# puts test
