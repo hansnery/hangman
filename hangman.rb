@@ -14,13 +14,23 @@ class Hangman
   def begin_game
     create_secret_word
     # puts "#{@word}" # For the purpose of testing
-    puts "\nWelcome to Hangman!"
-    draw_hangman
-    display_characters
-    while @hanged == false
-      ask_for_letter
-      check_matches
+    puts "\nWelcome to Hangman!\n\n1. Play\n2. Load\n3. Exit\n\nType one of the numbers above to proceed:"
+    choice = gets.chomp
+    if choice == "1"
+      draw_hangman
       display_characters
+      while @hanged == false
+        ask_for_letter
+        check_matches
+        display_characters
+      end
+    elsif choice == "2"
+      puts "\nLoading game..."
+    elsif choice == "3"
+      return
+    else
+      puts "\nType a valid number!"
+      begin_game
     end
   end
 
